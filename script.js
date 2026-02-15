@@ -3,7 +3,7 @@ let products = []; // Sheets ကနေလာမယ့် data သိမ်းရ
 let basket = [];
 
 // မင်းရဲ့ Apps Script Web App URL ကို ဒီမှာ အစားထိုးပါ
-const API_URL = "YOUR_WEB_APP_URL_HERE"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbwznakKlSDGqJbjt3xhD6YvPu5Jg0fdEKrIO4ul4Y-KJhvZeIKaVv1w0uGbxZYcPWcX/exec"; 
 
 /**
  * ၀။ Google Sheets မှ Data ဆွဲထုတ်ခြင်း (New Logic)
