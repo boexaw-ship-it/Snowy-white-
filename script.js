@@ -1,57 +1,20 @@
 // --- Global State ---
-let products = [];
+// products.js ထဲက variable ကို သုံးမှာဖြစ်လို့ ဒီမှာ let products = [] ကို ဖျက်လိုက်ပါပြီ
 let basket = [];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwznakKlSDGqJbjt3xhD6YvPu5Jg0fdEKrIO4ul4Y-KJhvZeIKaVv1w0uGbxZYcPWcX/exec"; 
-
 /**
- * ၀။ Google Sheets မှ Data ဆွဲထုတ်ခြင်း (Case-insensitive Fix)
+ * ၀။ Initialize App (Sheets အစား Local Data သုံးမည်)
  */
-async function fetchProducts() {
-    try {
-        console.log("Fetching data from:", API_URL);
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        
-        // Sheets ကလာတဲ့ data တွေကို စစ်ဆေးပြီး format ညှိမယ်
-        products = data.map(p => {
-            // Key နာမည်တွေ အကြီးအသေးမှားနေရင်တောင် သိအောင်လုပ်ပေးထားတယ်
-            const id = p.id || p.Id || p.ID;
-            const name = p.name || p.Name;
-            const category = (p.category || p.Category || "").toLowerCase();
-            const priceRaw = p.price || p.Price;
-            const image = p.image || p.Image;
-
-            let priceOptions = [];
-            let priceSingle = 0;
-
-            if (category === 'cake') {
-                try {
-                    // Price ထဲက Double Quotes တွေကို ရှင်းပြီးမှ JSON parse လုပ်မယ်
-                    const cleanedPrice = priceRaw.toString().replace(/""/g, '"');
-                    priceOptions = JSON.parse(cleanedPrice);
-                } catch (e) {
-                    console.error("Price JSON Parse Error for:", name, e);
-                    priceOptions = [{ size: "Standard", price: 0 }];
-                }
-            } else {
-                priceSingle = parseInt(priceRaw) || 0;
-            }
-
-            return { id, name, category, priceOptions, price: priceSingle, image };
-        });
-
-        renderFeatured();
-        renderProducts('all');
-        console.log("Success! Products loaded:", products);
-    } catch (error) {
-        console.error("Fetch error:", error);
-        showToast("⚠️ Data ဆွဲရတာ အဆင်မပြေပါ");
-    }
+function initApp() {
+    // products က products.js ထဲမှာ ရှိနေပြီးသားမို့ တိုက်ရိုက်သုံးလို့ရပါပြီ
+    renderFeatured();
+    renderProducts('all');
+    console.log("App loaded with local products.js");
 }
 
-// --- ကျန်တဲ့ Navigation နဲ့ Cart Logic တွေ (မူလအတိုင်း) ---
-
+/**
+ * ၁။ Toast Logic
+ */
 function showToast(message) {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -62,19 +25,25 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 3000);
 }
 
+/**
+ * ၂။ Page Switching
+ */
 function changeTab(pageId, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const activePage = document.getElementById(pageId);
-    if (activePage) activePage.classList.add('active');
+    document.getElementById(pageId).classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     btn.classList.add('active');
     window.scrollTo(0, 0);
 }
 
+/**
+ * ၃။ Render Shop Products
+ */
 function renderProducts(filter = 'all') {
     const container = document.getElementById('product-list-container');
     if (!container) return;
     container.innerHTML = "";
+
     const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
 
     filtered.forEach(p => {
@@ -84,14 +53,18 @@ function renderProducts(filter = 'all') {
             : `<p class="price">${p.price.toLocaleString()} Ks</p>
                <button class="add-btn" onclick="quickAdd('${p.name}', ${p.price})">Add to Cart</button>`;
 
-        container.innerHTML += `<div class="card">
-            <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/150?text=Snow+White'">
-            <h4>${p.name}</h4>
-            ${actionHTML}
-        </div>`;
+        container.innerHTML += `
+            <div class="card">
+                <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/150?text=Snow+White'">
+                <h4>${p.name}</h4>
+                ${actionHTML}
+            </div>`;
     });
 }
 
+/**
+ * ၄။ Render Featured
+ */
 function renderFeatured() {
     const container = document.getElementById('featured-products');
     if (!container) return;
@@ -100,7 +73,7 @@ function renderFeatured() {
         <div class="card">
             <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/150?text=Snow+White'">
             <h4>${p.name}</h4>
-            <p class="price">${p.category === 'cake' ? (p.priceOptions[0]?.price || 0).toLocaleString() : p.price.toLocaleString()} Ks</p>
+            <p class="price">${p.category === 'cake' ? p.priceOptions[0].price.toLocaleString() : p.price.toLocaleString()} Ks</p>
             <button class="add-btn" onclick="navToShop()">View in Shop</button>
         </div>
     `).join('');
@@ -111,6 +84,7 @@ function navToShop() {
     changeTab('shop', shopBtn);
 }
 
+// ... အရင်ပေးထားတဲ့ Cart & Order Logic တွေ ဆက်ထည့်ပါ ...
 function quickAdd(name, price) {
     basket.push({ name, price: parseInt(price) });
     showToast(`✅ ${name} ကို ထည့်လိုက်ပါပြီ!`);
@@ -137,8 +111,10 @@ function updateCartUI() {
     list.innerHTML = basket.map((item, index) => `
         <div class="cart-item">
             <span>${item.name}</span>
-            <div><strong>${item.price.toLocaleString()} K</strong>
-            <button onclick="removeItem(${index})" style="background:none; color:#d63031; border:none; margin-left:10px;">✕</button></div>
+            <div>
+                <strong>${item.price.toLocaleString()} K</strong>
+                <button onclick="removeItem(${index})" style="background:none; color:#d63031; border:none; margin-left:10px; cursor:pointer;">✕</button>
+            </div>
         </div>
     `).join('');
     calculateTotal();
@@ -153,19 +129,4 @@ function calculateTotal() {
     const subtotal = basket.reduce((sum, item) => sum + item.price, 0);
     const deli = parseInt(document.getElementById('township').value) || 0;
     document.getElementById('grand-total').innerText = (subtotal + deli).toLocaleString();
-}
-
-function submitOrder() {
-    const name = document.getElementById('cust-name').value;
-    const phone = document.getElementById('cust-phone').value;
-    const addr = document.getElementById('cust-address').value;
-    const area = document.getElementById('township').options[document.getElementById('township').selectedIndex].text;
-
-    if (!name || !phone || basket.length === 0) {
-        showToast("⚠️ အချက်အလက်များ ပြည့်စုံစွာ ဖြည့်ပေးပါ");
-        return;
-    }
-
-    const orderData = { customerName: name, customerPhone: phone, customerAddress: addr, area, items: basket, totalAmount: document.getElementById('grand-total').innerText };
-    if (typeof handleOrder === "function") handleOrder(orderData);
 }
