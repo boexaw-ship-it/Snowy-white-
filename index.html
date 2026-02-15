@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snow White’s Cakes & Flora</title>
     
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#d63031">
-    <link rel="apple-touch-icon" href="assets/logos/icon-192.png">
+    <link rel="apple-touch-icon" href="./assets/logos/icon-192.png">
 
     <link rel="stylesheet" href="style.css">
     
@@ -33,12 +33,14 @@
             </div>
 
             <h2 class="section-title">Best Sellers</h2>
-            <div class="product-grid" id="featured-products"></div>
+            <div class="product-grid" id="featured-products">
+                <p style="text-align: center; grid-column: 1/-1;">Loading products...</p>
+            </div>
         </section>
 
         <section id="shop" class="page">
             <h2 class="section-title">Our Menu</h2>
-            <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px; overflow-x: auto; padding: 5px 0;">
                 <button onclick="renderProducts('all')" class="filter-btn">All</button>
                 <button onclick="renderProducts('cake')" class="filter-btn">Cakes</button>
                 <button onclick="renderProducts('flower')" class="filter-btn">Flowers</button>
@@ -54,7 +56,7 @@
                 <p class="empty-msg">Your basket is currently empty.</p>
             </div>
 
-            <div class="checkout-form card">
+            <div class="checkout-form card" style="margin-top: 20px;">
                 <h3>Order Information</h3>
                 <input type="text" id="cust-name" placeholder="Full Name" required>
                 <input type="tel" id="cust-phone" placeholder="Phone Number" required>
@@ -69,12 +71,12 @@
                     <option value="5000">North Dagon (5,000 Ks)</option>
                 </select>
 
-                <div class="total-section">
+                <div class="total-section" style="margin: 20px 0; padding-top: 15px; border-top: 1px dashed #ccc;">
                     <strong>Total Amount:</strong>
-                    <span><span id="grand-total">0</span> Ks</span>
+                    <span style="color: #d63031; font-size: 1.2rem; font-weight: bold;"><span id="grand-total">0</span> Ks</span>
                 </div>
 
-                <button class="order-submit-btn" onclick="submitOrder()" style="width: 100%;">
+                <button class="order-submit-btn" onclick="submitOrder()" style="width: 100%; padding: 15px; font-size: 1rem;">
                     Confirm via Telegram
                 </button>
             </div>
@@ -82,18 +84,11 @@
 
         <section id="contact" class="page">
             <h2 class="section-title">Contact Us</h2>
-            <div class="map-wrapper card">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122283.788206412!2d96.1291612!3d16.8256677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec4930d421c7%3A0xf0df693de62e5458!2sYangon!5e0!3m2!1sen!2smm!4v1647450000000" 
-                    width="100%" height="250" style="border:0;" 
-                    allowfullscreen="" loading="lazy">
-                </iframe>
-            </div>
             <div class="info-card card">
                 <p>📍 No.45, Snow White St, Yangon</p>
                 <p>📞 09-987654321</p>
                 <p>📧 order@snowwhite.com</p>
-                <button class="add-btn" style="width: 100%; margin-top: 10px;" onclick="window.open('https://goo.gl/maps/...')">Get Directions</button>
+                <button class="add-btn" style="width: 100%; margin-top: 10px;" onclick="window.open('https://maps.google.com')">Get Directions</button>
             </div>
         </section>
 
@@ -120,23 +115,28 @@
         </button>
     </nav>
 
-    <script src="products.js"></script>
     <script src="script.js"></script>
     <script src="telegram.js"></script>
 
     <script>
-        // App စဖွင့်ချိန်မှာ ပစ္စည်းတွေကို ဆွဲတင်ခိုင်းခြင်း
+        // ၁။ App စဖွင့်ချိန်မှာ Google Sheets ကနေ Data ဆွဲမယ်
         window.onload = () => {
-            if (typeof renderProducts === "function") {
-                renderProducts('all'); 
-                renderFeatured();      
+            // script.js ထဲက fetchProducts function ကို အဓိက သုံးပါမယ်
+            if (typeof fetchProducts === "function") {
+                fetchProducts(); 
+            } else {
+                // Sheets API URL မထည့်ရသေးခင် ယာယီပြဖို့ (Optional)
+                if (typeof renderProducts === "function") {
+                    renderProducts('all'); 
+                    renderFeatured();      
+                }
             }
         };
 
-        // Service Worker (PWA) Register
+        // ၂။ Service Worker (PWA) Register လုပ်ခြင်း
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log("Service Worker Active"))
+            navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log("Service Worker Active: ", reg.scope))
             .catch(err => console.log("SW Error:", err));
         }
     </script>
