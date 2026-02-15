@@ -1,9 +1,41 @@
 // --- Global State ---
+let products = []; // Sheets ကနေလာမယ့် data သိမ်းရန်
 let basket = [];
 
+// မင်းရဲ့ Apps Script Web App URL ကို ဒီမှာ အစားထိုးပါ
+const API_URL = "YOUR_WEB_APP_URL_HERE"; 
+
 /**
- * ၁။ Toast Notification Logic (New UI)
- * Browser Alert အစား အသုံးပြုရန်
+ * ၀။ Google Sheets မှ Data ဆွဲထုတ်ခြင်း (New Logic)
+ */
+async function fetchProducts() {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        // Google Sheets ကလာတဲ့ Data ကို Format ပြန်ညှိခြင်း
+        products = data.map(p => ({
+            id: p.id,
+            name: p.name,
+            category: p.category,
+            // category က cake ဆိုရင် price ကို JSON string ကနေ object ပြောင်းမယ်
+            priceOptions: p.category === 'cake' ? JSON.parse(p.price) : [],
+            price: p.category !== 'cake' ? parseInt(p.price) : 0,
+            image: p.image
+        }));
+
+        // Data ရပြီဆိုမှ Render လုပ်မယ်
+        renderFeatured();
+        renderProducts('all');
+        console.log("Data loaded from Sheets!");
+    } catch (error) {
+        console.error("Fetch error:", error);
+        showToast("⚠️ Data ဆွဲရတာ အဆင်မပြေပါ");
+    }
+}
+
+/**
+ * ၁။ Toast Notification Logic
  */
 function showToast(message) {
     const container = document.getElementById('toast-container');
@@ -15,7 +47,6 @@ function showToast(message) {
     
     container.appendChild(toast);
 
-    // ၃ စက္ကန့်ပြည့်လျှင် အလိုအလျောက်ပြန်ဖြုတ်မည်
     setTimeout(() => {
         toast.remove();
     }, 3000);
@@ -82,6 +113,7 @@ function renderFeatured() {
     const container = document.getElementById('featured-products');
     if (!container) return;
 
+    // ရှေ့ဆုံးက ပစ္စည်း ၂ ခုကို Best Seller အဖြစ်ပြမယ်
     const featured = products.slice(0, 2); 
     container.innerHTML = featured.map(p => `
         <div class="card">
@@ -99,7 +131,7 @@ function navToShop() {
 }
 
 /**
- * ၅။ Add to Cart Logic (Modified for Toast)
+ * ၅။ Add to Cart Logic
  */
 function quickAdd(name, price) {
     basket.push({ name, price: parseInt(price) });
@@ -122,6 +154,8 @@ function addToCartWithOptions(name, selectId) {
  */
 function updateCartUI() {
     const list = document.getElementById('cart-items-list');
+    if (!list) return;
+
     if (basket.length === 0) {
         list.innerHTML = '<p class="empty-msg">Your basket is currently empty.</p>';
         calculateTotal();
@@ -133,7 +167,7 @@ function updateCartUI() {
             <span>${item.name}</span>
             <div>
                 <strong>${item.price.toLocaleString()} K</strong>
-                <button onclick="removeItem(${index})" style="background:none; color:var(--deep-red); border:none; margin-left:10px; cursor:pointer;">✕</button>
+                <button onclick="removeItem(${index})" style="background:none; color:#d63031; border:none; margin-left:10px; cursor:pointer;">✕</button>
             </div>
         </div>
     `).join('');
@@ -149,7 +183,8 @@ function removeItem(index) {
 function calculateTotal() {
     const subtotal = basket.reduce((sum, item) => sum + item.price, 0);
     const deli = parseInt(document.getElementById('township').value) || 0;
-    document.getElementById('grand-total').innerText = (subtotal + deli).toLocaleString();
+    const total = subtotal + deli;
+    document.getElementById('grand-total').innerText = total.toLocaleString();
 }
 
 /**
@@ -179,4 +214,6 @@ function submitOrder() {
     if (typeof handleOrder === "function") {
         handleOrder(orderData);
     }
-} 
+}
+
+// App စဖွင့်ချိန်မှာ fetchProducts ကို ခေါ်ပေးပါ (index.html မှာ window.onload ပါပြီးသားမို့လို့ ဒီမှာ ထပ်ရေးစရာမလိုပါ)
