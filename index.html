@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snow White’s Cakes & Flora</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d63031">
+    <link rel="apple-touch-icon" href="assets/logos/icon-192.png">
+
+    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>Snow White's</h1>
+            <p>Premium Cakes & Floral Boutique</p>
+        </div>
+    </header>
+
+    <main id="app-container">
+        
+        <section id="home" class="page active">
+            <div class="promo-banner">
+                <div class="promo-content">
+                    <h3>Special Offer 🍎</h3>
+                    <p>Order any 2 cakes & get free delivery!</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">Best Sellers</h2>
+            <div class="product-grid" id="featured-products"></div>
+        </section>
+
+        <section id="shop" class="page">
+            <h2 class="section-title">Our Menu</h2>
+            <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <button onclick="renderProducts('all')" class="filter-btn">All</button>
+                <button onclick="renderProducts('cake')" class="filter-btn">Cakes</button>
+                <button onclick="renderProducts('flower')" class="filter-btn">Flowers</button>
+            </div>
+            
+            <div class="product-grid" id="product-list-container">
+                </div>
+        </section>
+
+        <section id="cart" class="page">
+            <h2 class="section-title">My Basket</h2>
+            <div id="cart-items-list" class="cart-container">
+                <p class="empty-msg">Your basket is currently empty.</p>
+            </div>
+
+            <div class="checkout-form card">
+                <h3>Order Information</h3>
+                <input type="text" id="cust-name" placeholder="Full Name" required>
+                <input type="tel" id="cust-phone" placeholder="Phone Number" required>
+                <textarea id="cust-address" placeholder="Delivery Address" rows="3"></textarea>
+                
+                <label for="township" style="font-size: 13px; font-weight: bold; margin-top: 10px; display: block;">Select Township</label>
+                <select id="township" onchange="calculateTotal()" class="size-select">
+                    <option value="0">Select your area</option>
+                    <option value="2000">Latha (2,000 Ks)</option>
+                    <option value="3000">Hlaing (3,000 Ks)</option>
+                    <option value="4000">Tamwe (4,000 Ks)</option>
+                    <option value="5000">North Dagon (5,000 Ks)</option>
+                </select>
+
+                <div class="total-section">
+                    <strong>Total Amount:</strong>
+                    <span><span id="grand-total">0</span> Ks</span>
+                </div>
+
+                <button class="order-submit-btn" onclick="submitOrder()" style="width: 100%;">
+                    Confirm via Telegram
+                </button>
+            </div>
+        </section>
+
+        <section id="contact" class="page">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="map-wrapper card">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122283.788206412!2d96.1291612!3d16.8256677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec4930d421c7%3A0xf0df693de62e5458!2sYangon!5e0!3m2!1sen!2smm!4v1647450000000" 
+                    width="100%" height="250" style="border:0;" 
+                    allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+            <div class="info-card card">
+                <p>📍 No.45, Snow White St, Yangon</p>
+                <p>📞 09-987654321</p>
+                <p>📧 order@snowwhite.com</p>
+                <button class="add-btn" style="width: 100%; margin-top: 10px;" onclick="window.open('https://goo.gl/maps/...')">Get Directions</button>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast-container"></div>
+
+    <nav class="bottom-navbar">
+        <button class="nav-link active" onclick="changeTab('home', this)">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-link" onclick="changeTab('shop', this)">
+            <span class="icon">🛒</span>
+            <span>Shop</span>
+        </button>
+        <button class="nav-link" onclick="changeTab('cart', this)">
+            <span class="icon">🛍️</span>
+            <span>Cart</span>
+        </button>
+        <button class="nav-link" onclick="changeTab('contact', this)">
+            <span class="icon">📍</span>
+            <span>Contact</span>
+        </button>
+    </nav>
+
+    <script src="products.js"></script>
+    <script src="script.js"></script>
+    <script src="telegram.js"></script>
+
+    <script>
+        // App စဖွင့်ချိန်မှာ ပစ္စည်းတွေကို ဆွဲတင်ခိုင်းခြင်း
+        window.onload = () => {
+            if (typeof renderProducts === "function") {
+                renderProducts('all'); 
+                renderFeatured();      
+            }
+        };
+
+        // Service Worker (PWA) Register
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("Service Worker Active"))
+            .catch(err => console.log("SW Error:", err));
+        }
+    </script>
+</body>
+</html>
