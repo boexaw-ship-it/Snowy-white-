@@ -10,7 +10,6 @@
     <link rel="apple-touch-icon" href="./assets/logos/icon-192.png">
 
     <link rel="stylesheet" href="style.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -23,7 +22,6 @@
     </header>
 
     <main id="app-container">
-        
         <section id="home" class="page active">
             <div class="promo-banner">
                 <div class="promo-content">
@@ -31,7 +29,6 @@
                     <p>Order any 2 cakes & get free delivery!</p>
                 </div>
             </div>
-
             <h2 class="section-title">Best Sellers</h2>
             <div class="product-grid" id="featured-products">
                 <p style="text-align: center; grid-column: 1/-1;">Loading products...</p>
@@ -45,9 +42,7 @@
                 <button onclick="renderProducts('cake')" class="filter-btn">Cakes</button>
                 <button onclick="renderProducts('flower')" class="filter-btn">Flowers</button>
             </div>
-            
-            <div class="product-grid" id="product-list-container">
-                </div>
+            <div class="product-grid" id="product-list-container"></div>
         </section>
 
         <section id="cart" class="page">
@@ -55,7 +50,6 @@
             <div id="cart-items-list" class="cart-container">
                 <p class="empty-msg">Your basket is currently empty.</p>
             </div>
-
             <div class="checkout-form card" style="margin-top: 20px;">
                 <h3>Order Information</h3>
                 <input type="text" id="cust-name" placeholder="Full Name" required>
@@ -75,69 +69,45 @@
                     <strong>Total Amount:</strong>
                     <span style="color: #d63031; font-size: 1.2rem; font-weight: bold;"><span id="grand-total">0</span> Ks</span>
                 </div>
-
-                <button class="order-submit-btn" onclick="submitOrder()" style="width: 100%; padding: 15px; font-size: 1rem;">
-                    Confirm via Telegram
-                </button>
+                <button class="order-submit-btn" onclick="submitOrder()" style="width: 100%; padding: 15px;">Confirm via Telegram</button>
             </div>
         </section>
 
         <section id="contact" class="page">
             <h2 class="section-title">Contact Us</h2>
+            <div class="map-wrapper card" style="overflow: hidden; padding: 0; margin-bottom: 15px; height: 250px;">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3819.50764123!2d96.155!3d16.8!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTbCsDQ4JzAwLjAiTiA5NsKwMDknMTguMCJF!5e0!3m2!1sen!2smm!4v1630000000000!5m2!1sen!2smm" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
             <div class="info-card card">
                 <p>📍 No.45, Snow White St, Yangon</p>
                 <p>📞 09-987654321</p>
-                <p>📧 order@snowwhite.com</p>
-                <button class="add-btn" style="width: 100%; margin-top: 10px;" onclick="window.open('https://maps.google.com')">Get Directions</button>
+                <button class="add-btn" style="width: 100%; margin-top: 10px;" onclick="window.open('https://goo.gl/maps/...')">Get Directions</button>
             </div>
         </section>
-
     </main>
 
     <div id="toast-container"></div>
 
     <nav class="bottom-navbar">
-        <button class="nav-link active" onclick="changeTab('home', this)">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </button>
-        <button class="nav-link" onclick="changeTab('shop', this)">
-            <span class="icon">🛒</span>
-            <span>Shop</span>
-        </button>
-        <button class="nav-link" onclick="changeTab('cart', this)">
-            <span class="icon">🛍️</span>
-            <span>Cart</span>
-        </button>
-        <button class="nav-link" onclick="changeTab('contact', this)">
-            <span class="icon">📍</span>
-            <span>Contact</span>
-        </button>
+        <button class="nav-link active" onclick="changeTab('home', this)"><span class="icon">🏠</span><span>Home</span></button>
+        <button class="nav-link" onclick="changeTab('shop', this)"><span class="icon">🛒</span><span>Shop</span></button>
+        <button class="nav-link" onclick="changeTab('cart', this)"><span class="icon">🛍️</span><span>Cart</span></button>
+        <button class="nav-link" onclick="changeTab('contact', this)"><span class="icon">📍</span><span>Contact</span></button>
     </nav>
 
     <script src="script.js"></script>
     <script src="telegram.js"></script>
-
     <script>
-        // ၁။ App စဖွင့်ချိန်မှာ Google Sheets ကနေ Data ဆွဲမယ်
         window.onload = () => {
-            // script.js ထဲက fetchProducts function ကို အဓိက သုံးပါမယ်
             if (typeof fetchProducts === "function") {
                 fetchProducts(); 
-            } else {
-                // Sheets API URL မထည့်ရသေးခင် ယာယီပြဖို့ (Optional)
-                if (typeof renderProducts === "function") {
-                    renderProducts('all'); 
-                    renderFeatured();      
-                }
             }
         };
-
-        // ၂။ Service Worker (PWA) Register လုပ်ခြင်း
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log("Service Worker Active: ", reg.scope))
-            .catch(err => console.log("SW Error:", err));
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW Error:", err));
         }
     </script>
 </body>
