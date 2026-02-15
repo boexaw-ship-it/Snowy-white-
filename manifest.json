@@ -1,0 +1,21 @@
+{
+  "short_name": "SnowWhite",
+  "name": "Snow White’s Cakes & Flora",
+  "icons": [
+    {
+      "src": "assets/logos/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/logos/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#fdfbfb",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#d63031"
+}
