@@ -13,9 +13,9 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/index.html",
-  "background_color": "#fdfbfb",
+  "start_url": "/Snowy-white/index.html",
+  "scope": "/Snowy-white/",
   "display": "standalone",
-  "scope": "/",
+  "background_color": "#fdfbfb",
   "theme_color": "#d63031"
 }
