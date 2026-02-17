@@ -2,7 +2,7 @@
 let products = [];
 let basket = [];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwznakKlSDGqJbjt3xhD6YvPu5Jg0fdEKrIO4ul4Y-KJhvZeIKaVv1w0uGbxZYcPWcX/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbx5idT-Hq3lmJiDBDsl8E6ZKa-hWpg4I0ytFzx2r663IwzkV8vV-kMnudwGN-BhyPY/exec"; 
 
 /**
  * ၀။ Google Sheets မှ Data ဆွဲထုတ်ခြင်း (Case-insensitive Fix)
