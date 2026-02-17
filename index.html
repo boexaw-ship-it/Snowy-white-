@@ -34,7 +34,8 @@
 
             <h2 class="section-title">Best Sellers</h2>
             <div class="product-grid" id="featured-products">
-                </div>
+                <p style="text-align: center; grid-column: 1/-1;">Loading products...</p>
+            </div>
         </section>
 
         <section id="shop" class="page">
@@ -86,7 +87,7 @@
             
             <div class="map-wrapper card" style="overflow: hidden; padding: 0; margin-bottom: 15px; height: 250px; border-radius: 15px;">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122243.6826640693!2d96.06209303643756!3d16.832961502421356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec0930341ea9%3A0x21f4514f224785a4!2sYangon!5e0!3m2!1sen!2smm!4v1700000000000" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122283.78453472002!2d96.06179375529452!3d16.832840615598585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c1ec093033507d%3A0xc3f6089f38f71d50!2sYangon!5e0!3m2!1sen!2smm!4v1710000000000!5m2!1sen!2smm" 
                     width="100%" 
                     height="100%" 
                     style="border:0;" 
@@ -129,22 +130,24 @@
         </button>
     </nav>
 
-    <script src="products.js"></script>
     <script src="script.js"></script>
     <script src="telegram.js"></script>
 
     <script>
-        // App စဖွင့်ချိန်မှာ Local products.js ထဲက data တွေကို ဆွဲတင်ခြင်း
+        // ၁။ App စတင်ချိန်တွင် Google Sheets မှ Data များကို ဆွဲယူခြင်း
         window.onload = () => {
-            if (typeof initApp === "function") {
-                initApp(); // Local Data logic ကို စတင်စေခြင်း
-            } else if (typeof renderProducts === "function") {
-                renderProducts('all'); 
-                renderFeatured();      
+            if (typeof fetchProducts === "function") {
+                fetchProducts(); 
+            } else {
+                // Fallback rendering
+                if (typeof renderProducts === "function") {
+                    renderProducts('all'); 
+                    renderFeatured();      
+                }
             }
         };
 
-        // Service Worker (PWA) Register
+        // ၂။ PWA (Add to Home Screen) အတွက် Service Worker အား Register ပြုလုပ်ခြင်း
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log("Service Worker Active: ", reg.scope))
